@@ -1,7 +1,9 @@
 'use strict';
 
 //TODO 1.1 Require de las escenas, play_scene, gameover_scene y menu_scene.
-
+var PlayScene = require('./play_scene.js');
+var GameOver = require('./gameover_scene.js');
+var MenuScene = require('./menu_scene.js');
 //  The Google WebFont Loader will look for this object, so create it before loading the script.
 
 
@@ -36,8 +38,14 @@ var PreloaderScene = {
       //la imagen 'images/simples_pimples.png' con el nombre de la cache 'tiles' y
       // el atlasJSONHash con 'images/rush_spritesheet.png' como imagen y 'images/rush_spritesheet.json'
       //como descriptor de la animación.
+      this.game.load.image('tilemap','images/map.json' );
+      this.game.load.image('tiles', 'images/simples_pimples.png');
+
 
       //TODO 2.2a Escuchar el evento onLoadComplete con el método loadComplete que el state 'play'
+      this.loadonLoadComplete: function(){
+
+      }
 
   },
 
@@ -76,8 +84,13 @@ window.onload = function () {
   var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game');
 
 //TODO 1.2 Añadir los states 'boot' BootScene, 'menu' MenuScene, 'preloader' PreloaderScene, 'play' PlayScene, 'gameOver' GameOver.
+ game.state.add('boot', BootScene);
+ game.state.add('menu', MenuScene);
+ game.state.add('preloader', PreloaderScene);
+ game.state.add('play', PlayScene);
+ game.state.add ('gameOver', GameOver);
 
 //TODO 1.3 iniciar el state 'boot'. 
-
+game.state.start('boot');
     
 };
