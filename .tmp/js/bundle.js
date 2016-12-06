@@ -9,18 +9,36 @@ var GameOver = {
         button.anchor.set(0.5);
         var goText = this.game.add.text(400, 100, "GameOver");
         var text = this.game.add.text(0, 0, "Reset Game");
+        var text2 = this.game.add.text(0, 0, "Return Menu");
         text.anchor.set(0.5);
         goText.anchor.set(0.5);
+        text2.anchor.set(0.5);
+        goText.anchor.set(0.5);
         button.addChild(text);
-        
         //TODO 8 crear un boton con el texto 'Return Main Menu' que nos devuelva al menu del juego.
-    }
+        var button2 = this.game.add.button(400, 400, 
+                                          'button', 
+                                          this.actionOnClick2, 
+                                          this, 2, 1, 0);
+        button2.anchor.set(0.5);
+        button2.addChild(text2);
+    },
     
     //TODO 7 declarar el callback del boton.
+    actionOnClick: function(){
+        this.game.state.start('play');
+    },
+    actionOnClick2: function(){
+       this.game.world.setBounds(0,0,800,600);
+       this.game.stage.backgroundColor = '#000000';
+       this.game.state.start('menu');
+    }
 
 };
 
 module.exports = GameOver;
+
+
 },{}],2:[function(require,module,exports){
 'use strict';
 
@@ -62,23 +80,25 @@ var PreloaderScene = {
       //la imagen 'images/simples_pimples.png' con el nombre de la cache 'tiles' y
       // el atlasJSONHash con 'images/rush_spritesheet.png' como imagen y 'images/rush_spritesheet.json'
       //como descriptor de la animación.
+       this.game.load.tilemap('tilemap', 'images/map.json', null, Phaser.Tilemap.TILED_JSON);
        this.game.load.image('tiles', 'images/simples_pimples.png');
-       this.game.load.image('atlasJSONHash', 'images/rush_spritesheet.png');
-       this.game.load.tilemap('tileMap', 'images/rush_spritesheet.json', null, Phaser.Tilemap.TILED_JSON);
+       this.game.load.atlasJSONHash('rush_idle01', 'images/rush_spritesheet.png', 'images/rush_spritesheet.json', Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
+       
       //TODO 2.2a Escuchar el evento onLoadComplete con el método loadComplete que el state 'play'
-        this.game.load.onLoadComplete.add(loadComplete, this);
+        this.game.load.onLoadComplete.add(this.loadComplete, this);
   },
 
   loadStart: function () {
-    //this.game.state.start('play');
     console.log("Game Assets Loading ...");
   },
     
     
      //TODO 2.2b function loadComplete()
   loadComplete: function(){
-		this.game.state.start('play');
-     },
+    console.log("dentro");
+		//this._ready = true;
+    this.game.state.start('play');
+    },
 
   update: function(){
         this._loadingBar
@@ -166,9 +186,10 @@ var PlayScene = {
   create: function () {
       //Creamos al player con un sprite por defecto.
       //TODO 5 Creamos a rush 'rush'  con el sprite por defecto en el 10, 10 con la animación por defecto 'rush_idle01'
-      
+      this._rush = this.game.add.sprite(10, 10, 'rush_idle01');
       //TODO 4: Cargar el tilemap 'tilemap' y asignarle al tileset 'patrones' la imagen de sprites 'tiles'
-      
+      this.map = this.game.add.tilemap('tilemap');
+      this.map.addTilesetImage('patrones','tiles');
       //Creacion de las layers
       this.backgroundLayer = this.map.createLayer('BackgroundLayer');
       this.groundLayer = this.map.createLayer('GroundLayer');
@@ -182,7 +203,6 @@ var PlayScene = {
       this.groundLayer.setScale(3,3);
       this.backgroundLayer.setScale(3,3);
       this.death.setScale(3,3);
-      
       //this.groundLayer.resizeWorld(); //resize world and adjust to the screen
       
       //nombre de la animación, frames, framerate, isloop
@@ -280,6 +300,8 @@ var PlayScene = {
     
     onPlayerFell: function(){
         //TODO 6 Carga de 'gameOver';
+        this.destroy();
+        this.game.state.start('gameOver');
     },
     
     checkPlayerFell: function(){
@@ -332,6 +354,10 @@ var PlayScene = {
     },
     
     //TODO 9 destruir los recursos tilemap, tiles y logo.
+    destroy: function(){
+    this._rush.destroy();
+    this.map.destroy();
+    }
 
 };
 
